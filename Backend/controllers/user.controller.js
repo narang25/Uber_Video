@@ -35,3 +35,31 @@ module.exports.registerUser = async (req, res, next) => {
 
     res.status(201).json({ token, user });
 };
+
+module.exports.loginUser =async (req,res,next) => {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Destructure the fields properly
+    const { email, password } = req.body;
+
+    // Find the user by email
+    const user = await userModel.findOne({ email }).select('+password');
+    if (!user) {
+        return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // Compare the password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+        return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // Generate a token
+    const token = user.generateAuthToken();
+
+    res.status(200).json({ token, user });
+}
