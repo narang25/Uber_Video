@@ -10,9 +10,9 @@ module.exports.createCaptain = async ({
         throw new Error("All fields are required");
     }
     const captain = captainModel.create({
-        fullName: {
-            firstName: firstname,
-            lastName: lastname
+        fullname: {
+            firstname: firstname,
+            lastname: lastname
         },
         email,
         password,
