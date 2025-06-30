@@ -57,10 +57,10 @@ const captainSchema = new mongoose.Schema({
         }
     },
     location: {
-        lat:{
+        ltd:{
             type: Number,
         },
-        log:{
+        lng:{
             type: Number,
         }}
 })
@@ -85,6 +85,6 @@ captainSchema.statics.hashPassword = async function (password) {
 
 
 
-const captainModel = mongoose.model("Captain", captainSchema);
+const captainModel = mongoose.model("captain", captainSchema);
 
 module.exports = captainModel;
