@@ -1,0 +1,49 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: uber-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - uber-network
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: uber-backend
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - DB_CONNECT=mongodb://mongo:27017/uber
+      - JWT_SECRET=uber-secret
+    depends_on:
+      - mongo
+    networks:
+      - uber-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_BASE_URL=http://localhost:5173
+    container_name: uber-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - uber-network
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+
+networks:
+  uber-network:
+    driver: bridge
